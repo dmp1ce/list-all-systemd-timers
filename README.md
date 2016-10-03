@@ -3,7 +3,7 @@
 Two examples of how to show all systemd timers running on the current system.
 Requires root access.
 
-## Explination
+## Explanation
 
 Thanks to the Freenode #systemd IRC channel (users dreisner and damjan),
 I learned that systemd requires the user to run `systemctl --user list-timers`
