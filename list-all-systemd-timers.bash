@@ -4,7 +4,7 @@
 
 if [ $(id -u) -ne 0 ]; then
   echo "Sorry, not root user."
-  echo "Please use sudo or su to becomeroot user before running this script."
+  echo "Please use sudo or su to become root user before running this script."
   exit 1
 fi
 
