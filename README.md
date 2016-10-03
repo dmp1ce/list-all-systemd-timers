@@ -10,7 +10,7 @@ I learned that systemd requires the user to run `systemctl --user list-timers`
 in order to print the running timers. 
 
 If an administrator of the system wants to `sudo` or `su` as another user in order to
-see the tiemrs, then they need to set `XDG_RUNTIME_DIR` envrionment variable.
+see the timers, then they need to set `XDG_RUNTIME_DIR` envrionment variable.
 
 The code here automates this process and shows all the running timers.
 
