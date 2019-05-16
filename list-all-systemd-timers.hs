@@ -1,6 +1,11 @@
-#!/usr/bin/env runhaskell
+#!/usr/bin/env stack
+-- stack script --resolver lts-13.21
+
+{-# OPTIONS_GHC -Werror -Wall #-}
 
 {- Print all systemd timers, including system-wide and all user timers. -}
+
+module Main where
 
 import System.Process
 import System.Posix.User
@@ -15,8 +20,8 @@ type Command   = String
 
 main :: IO ()
 main = do
-  uid <- getRealUserID
-  if uid == CUid 0
+  uid' <- getRealUserID
+  if uid' == CUid 0
   then listTimers
   else do
     putStrLn "Sorry, not root user.\n\
@@ -35,9 +40,9 @@ listTimers = do
 
 createListTimersCommandString :: User -> Command
 createListTimersCommandString Root  = "systemctl --no-pager list-timers"
-createListTimersCommandString (User name uid) =
-  "su " ++ name 
-  ++ " -c 'XDG_RUNTIME_DIR=/run/user/" ++ (show uid)
+createListTimersCommandString (User name uid') =
+  "su " ++ name
+  ++ " -c 'XDG_RUNTIME_DIR=/run/user/" ++ (show uid')
   ++ " systemctl --no-pager --user list-timers'"
 
 -- This is intended to get every 'User' who has an active dbus daemon running.
@@ -51,7 +56,7 @@ getDbusUserList = do
 
 uidsWithRunningDbusDaemon :: IO [Int]
 uidsWithRunningDbusDaemon = do
-  o <- readProcess 
+  o <- readProcess
     "systemctl"
     ["--no-legend", "--full", "list-units", "--state=active", "user@*.service"]
     ""
@@ -63,6 +68,8 @@ parseSystemctlOutputForUIDs s = (read . p) <$> lines s
     p :: String -> String
     p ('@':xs)  = p' xs
     p (_:xs)    = p xs
+    p ""        = ""
     p' :: String -> String
-    p' ('.':xs)   = ""
+    p' ('.':_)   = ""
     p' (x:xs)   = x:(p' xs)
+    p' ""       = ""
